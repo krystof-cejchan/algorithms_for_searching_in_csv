@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter.filedialog import askopenfile
 
-from table import Table, openNewWindowWithTable
+from table import openNewWindowWithTable
 
 window = Tk(className='Algoritmy pro vyhledávání v CSV')
 # set window size
@@ -11,13 +11,6 @@ window.iconphoto(False, PhotoImage(file="media/icon.png"))
 
 csv_text = ""
 filepath = "-"
-lst = [(1, 'Raj', 'Mumbai', 19),
-       (2, 'Aaryan', 'Pune', 18),
-       (3, 'Vaishnavi', 'Mumbai', 20),
-       (4, 'Rachna', 'Mumbai', 21),
-       (5, 'Shubham', 'Delhi', 21)]
-total_rows = len(lst)
-total_columns = len(lst[0])
 
 MODES = [
     ("Linear Search", "1"),
@@ -46,21 +39,25 @@ def open_file():
     if file is not None:
         csv_text = file.read()
         labelText.set('Cesta k vybranému souboru je\n' + file.name)
-        openNewWindowWithTable(window, total_rows, total_columns, lst)
+        openNewWindowWithTable(window, use_data(csv_text))
         # id,first_name,last_name,email,gender,phone
-        use_data(csv_text)
 
 
 def use_data(csv):
     lines = csv.splitlines()
-    for f in lines[1:]:
-        for i in range(len(f.split(','))):
-            if i == 0:
-                print("\n")
-            print(f.split(',')[i])
-            # create an object of person which will hold the data from the csv file
-            # --objects may not be possible as user can open any file
-            # then work with these objects
+    data = []
+    for f in lines:
+        data.append(f.split(','))
+        print(f.split(','))
+    return data
+
+    # for i in range(len(f.split(','))):
+    #     if i == 0:
+    #         print("\n")
+    #     print(f.split(',')[i])
+    # create an object of person which will hold the data from the csv file
+    # --objects may not be possible as user can open any file
+    # then work with these objects
 
 
 btn = Button(window, fg='black', bg='yellow', text='Vybrat CSV soubor', command=lambda: open_file())
