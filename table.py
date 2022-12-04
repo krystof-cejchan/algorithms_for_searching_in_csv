@@ -1,4 +1,4 @@
-from tkinter import Entry, END, Toplevel, DISABLED, ttk, Scrollbar, RIGHT, BOTH, LEFT, Listbox
+from tkinter import Entry, END, Toplevel, DISABLED, ttk, Scrollbar, RIGHT, BOTH, LEFT, Listbox, BOTTOM
 
 
 def openNewWindowWithTable(window, lst):
@@ -20,11 +20,12 @@ def openNewWindowWithTable(window, lst):
 class Table:
 
     def __init__(self, root, list_of_data):
-        s = Scrollbar()
 
         # Create a horizontal scrollbar
         scrollbar = ttk.Scrollbar(root, orient='vertical')
         scrollbar.pack(side=RIGHT, fill=BOTH)
+        scrollbarH = ttk.Scrollbar(root, orient='horizontal')
+        scrollbarH.pack(side=BOTTOM, fill=BOTH)
 
         # Add a Listbox Widget
         listbox = Listbox(root, width=350, font='Helvetica 15 bold')
@@ -35,9 +36,11 @@ class Table:
             listbox.insert(END, values)
 
         listbox.config(yscrollcommand=scrollbar.set)
+        listbox.config(xscrollcommand=scrollbarH.set)
 
         # Configure the scrollbar
         scrollbar.config(command=listbox.yview)
+        scrollbarH.config(command=listbox.xview)
         # total_rows = len(listOfData)
         # total_columns = len(listOfData[0])
         # scrollbar = Scrollbar(orient="horizontal")
