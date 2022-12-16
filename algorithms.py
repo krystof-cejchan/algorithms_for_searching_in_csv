@@ -19,15 +19,17 @@ def rabin_karp(searched, full_text, q):
     p = 0
     t = 0
     h = 1
-    i = 0
     j = 0
 
     for i in range(m - 1):
         h = (h * d) % q
-
-    for i in range(m):
-        p = (d * p + ord(searched[i])) % q
-        t = (d * t + ord(full_text[i])) % q
+    try:
+        for i in range(m):
+            p = (d * p + ord(searched[i])) % q
+            t = (d * t + ord(full_text[i])) % q
+    except IndexError:
+        # vyhledávaný text je delší než text ve kterém se hledá
+        pass
 
     for i in range(n - m + 1):
         if p == t:
@@ -48,48 +50,34 @@ def rabin_karp(searched, full_text, q):
     return False
 
 
-# knuth morris pratt
-def kmp_search(pat, txt):
-    M = len(pat)
-    N = len(txt)
+# boyer moore algorithm
+def bad_char_heuristic(string, size):
+    NO_OF_CHARS = 256
+    badChar = [-1] * NO_OF_CHARS
 
-    lps = [0] * M
-    j = 0
+    for i in range(size):
+        badChar[ord(string[i])] = i
 
-    compute_longest_previous_suffix_array(pat, M, lps)
+    return badChar
 
-    i = 0
-    while i < N:
-        if pat[j] == txt[i]:
-            i += 1
-            j += 1
 
-        if j == M:
-            #   j = lps[j - 1]
+def boyer_moore(txt, pat):
+    m = len(pat)
+    n = len(txt)
+
+    badChar = bad_char_heuristic(pat, m)
+
+    s = 0
+    while s <= n - m:
+        j = m - 1
+
+        while j >= 0 and pat[j] == txt[s + j]:
+            j -= 1
+
+        if j < 0:
+            s += (m - badChar[ord(txt[s + m])] if s + m < n else 1)
             return True
-
-        elif i < N and pat[j] != txt[i]:
-            if j != 0:
-                j = lps[j - 1]
-            else:
-                i += 1
-    return False
-
-
-def compute_longest_previous_suffix_array(pat, M, lps):
-    length = 0
-
-    i = 1
-
-    while i < M:
-        if pat[i] == pat[length]:
-            length += 1
-            lps[i] = length
-            i += 1
         else:
-            if length != 0:
-                length = lps[length - 1]
+            s += max(1, j - badChar[ord(txt[s + j])])
 
-            else:
-                lps[i] = 0
-                i += 1
+    return False

@@ -9,9 +9,20 @@ import time
 
 window = Tk(className='Algoritmy pro vyhledávání v CSV')
 # set window size
-window.geometry("600x400")
+window.geometry("600x130")
 window.resizable(False, False)
-window.iconphoto(False, PhotoImage(file="media/icon.png"))
+window.iconphoto(False, PhotoImage(file="./media/icon.png"))
+
+
+btn = Button(window, fg='black', bg='yellow', text='Vybrat CSV soubor', command=lambda: open_file())
+btn.place(x=240, y=10)
+
+btn = Button(window, fg='black', bg='pink', text='Vyhledat', command=lambda: find_data())
+btn.place(x=370, y=77)
+
+bv = BooleanVar()
+c = Checkbutton(window, text="Musí se shodovat?", variable=bv, onvalue=True, offvalue=False)
+c.place(x=430, y=77)
 
 csv_text = ""
 filepath = "-"
@@ -20,7 +31,7 @@ file_data = []
 MODES = [
     ("Linear Search", "1"),
     ("Rabin-Karp", "2"),
-    ("Knuth-Morris-Pratt", "3")
+    ("Boyer Moore", "3")
 ]
 
 v = StringVar()
@@ -34,9 +45,21 @@ Label(window,
 inputtxt = Entry(window)
 inputtxt.place(x=240, y=80)
 
+
+def check_box_visibility():
+    match int(v.get()):
+        case 1:
+            c['state'] = "active"
+        case 2:
+            c['state'] = "disabled"
+        case 3:
+            bv.set(True)
+            c['state'] = "disabled"
+
+
 for text, mode in MODES:
     b = Radiobutton(window, text=text,
-                    variable=v, value=mode)
+                    variable=v, value=mode, command=check_box_visibility)
     b.pack(anchor=W)
 
 
@@ -66,34 +89,9 @@ def find_data():
             case 2:
                 openNewWindowWithTable(window, full_algorithms.full_rabin_karp(inputtxt.get(), file_data, 13))
             case 3:
-                openNewWindowWithTable(window, full_algorithms.full_knuth_morris_pratt(inputtxt.get(), file_data))
+                openNewWindowWithTable(window, full_algorithms.full_boyer_moore(inputtxt.get(), file_data))
         end = round(time.time() * 1000)
         tkinter.messagebox.showinfo(title="Čas", message=(str(end - start)+" ms"))
 
-# def use_data(csv):
-#     lines = csv.splitlines()
-#     data = []
-#     for f in lines:
-#         data.append(f)
-#     return data
-
-# for i in range(len(f.split(','))):
-#     if i == 0:
-#         print("\n")
-#     print(f.split(',')[i])
-# create an object of person which will hold the data from the csv file
-# --objects may not be possible as user can open any file
-# then work with these objects
-
-
-btn = Button(window, fg='black', bg='yellow', text='Vybrat CSV soubor', command=lambda: open_file())
-btn.place(x=240, y=10)
-
-btn = Button(window, fg='black', bg='pink', text='Vyhledat', command=lambda: find_data())
-btn.place(x=350, y=77)
-
-bv = BooleanVar()
-c = Checkbutton(window, text="Musí se shodovat?", variable=bv, onvalue=True, offvalue=False)
-c.place(x=410, y=77)
 
 mainloop()

@@ -35,11 +35,11 @@ def full_rabin_karp(searched, arr, q=13):
     return results
 
 
-def full_knuth_morris_pratt(searched, arr):
+def full_boyer_moore(searched, arr):
     results = []
     for line in arr:
         for separated_value in line.split(','):
-            res = algorithms.kmp_search(searched, separated_value)
+            res = algorithms.boyer_moore(separated_value, searched)
 
             if res:
                 results.append(line)
